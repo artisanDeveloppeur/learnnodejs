@@ -1,0 +1,1 @@
+ecrire dans le fichier texteflag signifie rajoute sans écraser
