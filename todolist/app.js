@@ -1,38 +1,20 @@
-import { readdir, stat } from "node:fs/promises"
-/**
- * F - app.js
- * D - demo
- */
-const wait = (duration) => new Promise(resolve => setTimeout(resolve, duration))
-console.time('code')
-const files = await readdir('./', { withFileTypes: true })
-await Promise.allSettled(
-  files.map(async (file) => {
-    const parts = [
-      file.isDirectory() ? 'D' : 'F',
-      file.name
-    ]
-    if (!file.isDirectory()) {
-      const { size } = await stat(file.name)
-      //const size = await wait(1000)
-      parts.push(`${size}octet`)
-    }
+import { createReadStream } from 'node:fs'
+import { stat } from "node:fs/promises"
+const stream = createReadStream('demo.txt')
+const { size } = await stat('demo.txt')
+let read = 0
+stream.on('data', (chunk) => {
+  read += chunk.length
+  console.log(Math.round(100 * read / size))
+  console.log(chunk.length)
 
-    console.log(parts.join(' - '))
-  })
-)
-//for (const file of files) {
+})
+stream.on('close', () => {
+  console.log('close')
 
+})
 
-//}
-console.timeEnd('code')
+//import { readFile, writeFile } from "node:fs/promises"
 
-/**
-import { readFile } from 'node:fs/promises'
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
-
-const dir = dirname(fileURLToPath(import.meta.url))
-const filename = join(dir, 'fichier.txt')
-console.log(await readFile(filename, { encoding: 'utf8' }))
- */
+//const content = await readFile('demo.txt')
+//await writeFile('demo-copy.txt', content)
