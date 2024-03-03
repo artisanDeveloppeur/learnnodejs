@@ -1,21 +1,20 @@
-import { createReadStream, createWriteStream } from 'node:fs'
-import { stat } from "node:fs/promises"
 
-const stream = createReadStream('demo.txt')
-const writeStream = createWriteStream('demo-copy.txt')
-stream.pipe(writeStream)
-/*
-const stream = createReadStream('demo.txt')
-const { size } = await stat('demo.txt')
-let read = 0
-stream.on('data', (chunk) => {
-  read += chunk.length
-  console.log(Math.round(100 * read / size))
-  console.log(chunk.length)
+import { createReadStream } from 'node:fs'
+import { createServer } from 'node:http'
+const server = createServer((req, res) => {
+  console.log(req.headers)
 
+  const file = createReadStream('index.html')
+  res.writeHead(200, {
+    'Content-Type': 'text/html'
+  })
+  file.pipe(res, { end: false })
+  file.on('end', () => {
+    res.end()
+  })
+  //res.write('hello server')
+  //res.end()
 })
-stream.on('close', () => {
-  console.log('close')
+server.listen('8888')
 
-})
-*/
+// http://localhost:8888/
