@@ -1,5 +1,10 @@
-import { createReadStream } from 'node:fs'
+import { createReadStream, createWriteStream } from 'node:fs'
 import { stat } from "node:fs/promises"
+
+const stream = createReadStream('demo.txt')
+const writeStream = createWriteStream('demo-copy.txt')
+stream.pipe(writeStream)
+/*
 const stream = createReadStream('demo.txt')
 const { size } = await stat('demo.txt')
 let read = 0
@@ -13,8 +18,4 @@ stream.on('close', () => {
   console.log('close')
 
 })
-
-//import { readFile, writeFile } from "node:fs/promises"
-
-//const content = await readFile('demo.txt')
-//await writeFile('demo-copy.txt', content)
+*/
