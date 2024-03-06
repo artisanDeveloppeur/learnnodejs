@@ -5,6 +5,16 @@ const [node, _, file] = process.argv
 function spawnNode() {
   console.log("reloading server")
   const pr = spawn(node, [file])
+  pr.stdout.pipe(process.stdout)
+  pr.stderr.pipe(process.stderr)
+  pr.once('close', (code) => {
+    if (code !== null) {
+      process.exit(code)
+    }
+    //console.log(`Process exited :${code}`)
+  })
+
+  /*
   pr.stdout.on('data', (data) => {
     console.log(data.toString('utf8'))
   })
@@ -17,15 +27,15 @@ function spawnNode() {
     }
     //console.log(`Process exited :${code}`)
   })
+  */
 
   return pr
 }
-
 let childNodeProcess = spawnNode()
 const watcher = watch('./', { recursive: true })
 for await (const event of watcher) {
   if (event.filename.endsWith('js')) {
-    childNodeProcess.kill()
+    childNodeProcess.kill('SIGKILL')
     childNodeProcess = spawnNode()
     //console.log(event)
 
