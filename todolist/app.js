@@ -1,45 +1,46 @@
 import { createServer } from 'node:http'
-import { json } from 'node:stream/consumers';
-import { createTodo, findTodos } from './functions/todos_storage.js'
+//import { json } from 'node:stream/consumers';
+//import { createTodo, findTodos } from './functions/todos_storage.js'
+import { create, index } from './functions/api/todo.js';
 
 const server = createServer(async (req, res) => {
   res.setHeader('Content-Type', 'application/json')
 
   const url = new URL(req.url, `http://${req.headers.host}`)
+  const endpoint = `${req.method}:${url.pathname}`
+  let results
+  switch (endpoint) {
+    case 'GET:/todos':
+      results = await index(req, res)
+      break;
+    case 'POST:/todos':
+      results = await create(req, res)
+      break;
+    default:
+      res.writeHead(404)
+  }
+  /*
   if (url.pathname === '/todos') {
 
     if (req.method === 'GET') {
-      const todos = await findTodos()
-      res.write(JSON.stringify(todos))
+      //const todos = await findTodos()
+      //res.write(JSON.stringify(todos))
 
     } else if (req.method === 'POST') {
       //const newTodo = await json(req)
       //console.log(newTodo)
-      const todo = await createTodo(await json(req))
-      res.write(JSON.stringify(todo))
+      //const todo = await createTodo(await json(req))
+      //res.write(JSON.stringify(todo))
 
     }
 
   } else {
     res.writeHead(404)
   }
-  console.log(url)
-  /**
-    URL {
-    href: 'http://localhost:8888/todos',
-    origin: 'http://localhost:8888',
-    protocol: 'http:',
-    username: '',
-    password: '',
-    host: 'localhost:8888',
-    hostname: 'localhost',
-    port: '8888',
-    pathname: '/todos',
-    search: '',
-    searchParams: URLSearchParams {},
-    hash: ''
+  */
+  if (results) {
+    res.write(JSON.stringify(results))
   }
-   */
   res.end();
 });
 server.listen('8888')
