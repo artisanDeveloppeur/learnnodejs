@@ -12,3 +12,5 @@ const server = createServer(async (req, res) => {
   res.end();
 });
 server.listen('8888')
+
+//http://localhost:8888/

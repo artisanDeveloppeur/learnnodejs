@@ -3,6 +3,7 @@ import { watch } from 'node:fs/promises'
 const [node, _, file] = process.argv
 
 function spawnNode() {
+  console.log("reloading server")
   const pr = spawn(node, [file])
   pr.stdout.on('data', (data) => {
     console.log(data.toString('utf8'))
@@ -11,7 +12,10 @@ function spawnNode() {
     console.error(data.toString('utf8'))
   })
   pr.once('close', (code) => {
-    console.log(`Process exited :${code}`)
+    if (code > 0) {
+      throw new Error(`Process exited :${code}`)
+    }
+    //console.log(`Process exited :${code}`)
   })
 
   return pr
@@ -23,7 +27,7 @@ for await (const event of watcher) {
   if (event.filename.endsWith('js')) {
     childNodeProcess.kill()
     childNodeProcess = spawnNode()
-    console.log(event)
+    //console.log(event)
 
   }
 }
