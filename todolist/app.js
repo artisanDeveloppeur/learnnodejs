@@ -1,7 +1,7 @@
 import { createServer } from 'node:http'
 //import { json } from 'node:stream/consumers';
 //import { createTodo, findTodos } from './functions/todos_storage.js'
-import { create, index, remove } from './functions/api/todo.js';
+import { create, index, remove, update } from './functions/api/todo.js';
 import { NotFoundError } from './functions/errors.js';
 
 const server = createServer(async (req, res) => {
@@ -19,6 +19,9 @@ const server = createServer(async (req, res) => {
         break;
       case 'DELETE:/todos':
         results = await remove(req, res, url)
+        break;
+      case 'PUT:/todos':
+        results = await update(req, res, url)
         break;
       default:
         res.writeHead(404)
