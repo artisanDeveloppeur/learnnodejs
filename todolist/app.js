@@ -1,7 +1,7 @@
 import { createServer } from 'node:http'
 //import { json } from 'node:stream/consumers';
 //import { createTodo, findTodos } from './functions/todos_storage.js'
-import { create, index } from './functions/api/todo.js';
+import { create, index, remove } from './functions/api/todo.js';
 
 const server = createServer(async (req, res) => {
   res.setHeader('Content-Type', 'application/json')
@@ -15,6 +15,9 @@ const server = createServer(async (req, res) => {
       break;
     case 'POST:/todos':
       results = await create(req, res)
+      break;
+    case 'DELETE:/todos':
+      results = await remove(req, res, url)
       break;
     default:
       res.writeHead(404)
